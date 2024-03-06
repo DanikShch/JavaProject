@@ -4,7 +4,7 @@ package org.example.javalab.dto;
 import java.util.List;
 
 public class ListDTO {
-    List<String> numList;//fg
+    List<String> numList;
     List<String> emailList;
 
 
