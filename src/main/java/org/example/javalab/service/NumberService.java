@@ -1,12 +1,8 @@
 package org.example.javalab.service;
 
 import jakarta.transaction.Transactional;
-import org.example.javalab.dto.DomainDTO;
 import org.example.javalab.dto.NumberDTO;
-import org.example.javalab.entity.Email;
-import org.example.javalab.entity.EmailType;
 import org.example.javalab.entity.Number;
-import org.example.javalab.entity.Request;
 import org.example.javalab.repository.NumberRepository;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 

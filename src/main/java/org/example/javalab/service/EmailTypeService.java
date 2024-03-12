@@ -9,7 +9,6 @@ import org.example.javalab.repository.EmailRepository;
 import org.example.javalab.repository.EmailTypeRepository;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-import javax.swing.plaf.PanelUI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

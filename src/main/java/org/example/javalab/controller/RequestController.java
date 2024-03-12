@@ -5,7 +5,6 @@ import org.example.javalab.dto.EmailDTO;
 import org.example.javalab.dto.MessageDTO;
 import org.example.javalab.dto.NumberDTO;
 import org.example.javalab.dto.RequestDTO;
-import org.example.javalab.service.NumberService;
 import org.example.javalab.service.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

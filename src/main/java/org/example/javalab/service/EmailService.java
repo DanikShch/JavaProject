@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import org.example.javalab.dto.EmailDTO;
 import org.example.javalab.entity.Email;
 import org.example.javalab.entity.EmailType;
-import org.example.javalab.entity.Number;
 import org.example.javalab.entity.Request;
 import org.example.javalab.repository.EmailRepository;
 import org.example.javalab.repository.EmailTypeRepository;
