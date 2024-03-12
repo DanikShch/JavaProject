@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.example</groupId>
-	<artifactId>JavaLab</artifactId>
+	<artifactId>JavaProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>JavaLab</name>
 	<description>JavaLab</description>
