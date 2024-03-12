@@ -79,7 +79,7 @@ public class EmailService {
             }
         }
         for(Email email : emails){
-            emailNames.add(new EmailDTO(email.getEmail()));
+            emailNames.add(new EmailDTO(email.getEmailName()));
         }
         return emailNames;
     }
@@ -89,7 +89,7 @@ public class EmailService {
         Pattern emailPattern = Pattern.compile(emailRegex);
         Matcher emailMatcher = emailPattern.matcher(newEmail);
         if (!emailMatcher.find()) return false;
-        Email emailEntity = emailRepository.findByEmail(email);
+        Email emailEntity = emailRepository.findByEmailName(email);
         if (emailEntity != null) {
             Pattern emailTypePattern = Pattern.compile(emailTypeRegex, Pattern.CASE_INSENSITIVE);
             Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
@@ -100,7 +100,7 @@ public class EmailService {
                     emailType = new EmailType(domain);
                     emailTypeRepository.save(emailType);
                 }
-                    emailEntity.setEmail(newEmail);
+                    emailEntity.setEmailName(newEmail);
                     emailEntity.setEmailType(emailType);
             }
             return true;
@@ -110,7 +110,7 @@ public class EmailService {
 
     @Transactional
     public boolean deleteEmail(String email) {
-        Email emailEntity = emailRepository.findByEmail(email);
+        Email emailEntity = emailRepository.findByEmailName(email);
         if (emailEntity != null) {
             for(Request request : emailEntity.getRequests()){
                 request.getEmails().remove(emailEntity);

@@ -45,7 +45,7 @@ public class RequestService {
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String number = matcher.group();
-            if(numberRepository.findByNumber(number)==null){
+            if(numberRepository.findByNumberName(number)==null){
                 numberRepository.save(new Number(number));
             }
             phoneNumbers.add(new NumberDTO(number));
@@ -68,11 +68,11 @@ public class RequestService {
             requestRepository.save(request);
         }
         for (Email email : emails) {
-            parsedEmails.add(new EmailDTO(email.getEmail()));
+            parsedEmails.add(new EmailDTO(email.getEmailName()));
             Pattern emailTypePattern = Pattern.compile(emailTypeRegex, Pattern.CASE_INSENSITIVE);
-            Matcher emailTypeMatcher = emailTypePattern.matcher(email.getEmail());
-            if(emailRepository.findByEmail(email.getEmail()) != null){
-                email = emailRepository.findByEmail(email.getEmail());
+            Matcher emailTypeMatcher = emailTypePattern.matcher(email.getEmailName());
+            if(emailRepository.findByEmailName(email.getEmailName()) != null){
+                email = emailRepository.findByEmailName(email.getEmailName());
                 email.getRequests().add(request);
             }
             if(emailTypeMatcher.find()){
@@ -98,7 +98,7 @@ public class RequestService {
             requests = requestRepository.findAll();
         }
         else{
-            Email emailEntity = emailRepository.findByEmail(email);
+            Email emailEntity = emailRepository.findByEmailName(email);
             if(emailEntity!=null){
                 requests = new ArrayList<>(emailEntity.getRequests());
             }

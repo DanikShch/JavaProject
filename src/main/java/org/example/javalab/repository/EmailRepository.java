@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface EmailRepository extends JpaRepository<Email,Long> {
-    Email findByEmail(String email);
+    Email findByEmailName(String emailName);
 
     Set<Email> findByEmailType(EmailType emailType);
 }

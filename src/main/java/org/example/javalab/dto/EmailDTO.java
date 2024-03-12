@@ -1,6 +1,5 @@
 package org.example.javalab.dto;
 
-import java.util.List;
 
 public class EmailDTO {
     String email;

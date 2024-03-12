@@ -14,8 +14,8 @@ public class Email {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "email_name")
+    private String emailName;
 
     @ManyToOne
     @JoinColumn(name = "email_type_id")
@@ -25,8 +25,8 @@ public class Email {
 
     public Email() {
     }
-    public Email(String email) {
-        this.email = email;
+    public Email(String emailName) {
+        this.emailName = emailName;
     }
 
     public Set<Request> getRequests() {
@@ -37,8 +37,8 @@ public class Email {
         this.requests = requests;
     }
 
-    public Email(String email, EmailType emailType) {
-        this.email = email;
+    public Email(String emailName, EmailType emailType) {
+        this.emailName = emailName;
         this.emailType = emailType;
     }
 
@@ -58,11 +58,11 @@ public class Email {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getEmailName() {
+        return emailName;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailName(String email) {
+        this.emailName = email;
     }
 }

@@ -11,21 +11,21 @@ public class Number {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "number")
-    private String number;
+    @Column(name = "number_name")
+    private String numberName;
 
     public Number() {
     }
-    public Number(String number) {
-        this.number = number;
+    public Number(String numberName) {
+        this.numberName = numberName;
     }
 
-    public String getNumber() {
-        return number;
+    public String getNumberName() {
+        return numberName;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setNumberName(String number) {
+        this.numberName = number;
     }
 
     public Long getId() {
