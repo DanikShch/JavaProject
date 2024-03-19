@@ -1,7 +1,6 @@
 package org.example.javalab.repository;
 
 import org.example.javalab.entity.Email;
-import org.example.javalab.entity.EmailType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
