@@ -1,6 +1,7 @@
 package org.example.javalab.service;
 
 import jakarta.transaction.Transactional;
+import org.example.javalab.component.Cache;
 import org.example.javalab.dto.EmailDTO;
 import org.example.javalab.dto.NumberDTO;
 import org.example.javalab.dto.RequestDTO;
@@ -25,17 +26,19 @@ public class RequestService {
     private static String emailRegex = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
     private static String numberRegex = "\\b(?:\\+\\d{1,3}[-.\\s]?)?(\\d{1,4}[-.\\s]?){1,2}\\d{1,9}\\b";
     private static String emailTypeRegex = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
+    Cache cache;
     RequestRepository requestRepository;
     EmailRepository emailRepository;
     EmailTypeRepository emailTypeRepository;
     NumberRepository numberRepository;
 
     public RequestService(RequestRepository requestRepository, EmailRepository emailRepository,
-                          EmailTypeRepository emailTypeRepository, NumberRepository numberRepository) {
+                          EmailTypeRepository emailTypeRepository, NumberRepository numberRepository, Cache cache) {
         this.requestRepository = requestRepository;
         this.emailRepository = emailRepository;
         this.emailTypeRepository = emailTypeRepository;
         this.numberRepository = numberRepository;
+        this.cache = cache;
     }
 
     @Transactional
@@ -87,20 +90,29 @@ public class RequestService {
             }
             email.getRequests().add(request);
             request.getEmails().add(email);
+            cache.put(email.getName(),email);
         }
+        cache.put(text,request);
         return parsedEmails;
     }
     @Transactional
     public List<RequestDTO> getRequests(String email){
         List<RequestDTO> requestDTOS = new ArrayList<>();
         List<Request> requests;
+        Email emailEntity;
         if(email==null){
             requests = requestRepository.findAll();
         }
         else{
-            Email emailEntity = emailRepository.findByName(email);
+            if(cache.contains(email)){
+                emailEntity = (Email) cache.get(email);
+            }
+            else {
+                emailEntity = emailRepository.findByName(email);
+            }
             if(emailEntity!=null){
                 requests = new ArrayList<>(emailEntity.getRequests());
+                cache.put(email,emailEntity);
             }
             else {
                 return null;
@@ -122,6 +134,8 @@ public class RequestService {
             email.getRequests().remove(requestEntity);
         }
         requestEntity.setText(newRequest);
+        cache.remove(request);
+        cache.put(newRequest, requestEntity);
         return true;
     }
 
@@ -133,6 +147,7 @@ public class RequestService {
                 email.getRequests().remove(requestEntity);
             }
             requestRepository.delete(requestEntity);
+            cache.remove(request);
             return true;
         }
         return false;

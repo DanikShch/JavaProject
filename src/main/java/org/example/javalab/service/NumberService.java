@@ -1,6 +1,7 @@
 package org.example.javalab.service;
 
 import jakarta.transaction.Transactional;
+import org.example.javalab.component.Cache;
 import org.example.javalab.dto.NumberDTO;
 import org.example.javalab.entity.Number;
 import org.example.javalab.repository.NumberRepository;
@@ -14,10 +15,12 @@ import java.util.regex.Pattern;
 @org.springframework.stereotype.Service
 @EntityScan("org.example.javalab.entity")
 public class NumberService {
+    Cache cache;
     NumberRepository numberRepository;
     private static String numberRegex = "\\b(?:\\+\\d{1,3}[-.\\s]?)?(\\d{1,4}[-.\\s]?){1,2}\\d{1,9}\\b";
 
-    public NumberService(NumberRepository numberRepository) {
+    public NumberService(NumberRepository numberRepository, Cache cache) {
+        this.cache = cache;
         this.numberRepository = numberRepository;
     }
 
@@ -33,7 +36,9 @@ public class NumberService {
             if (numberRepository.findByName(number) != null) {
                 return false;
             }
-            numberRepository.save(new Number(number));
+            Number numberEntity = new Number(number);
+            numberRepository.save(numberEntity);
+            cache.put(number,numberEntity);
             return true;
         }
         return false;
@@ -44,6 +49,8 @@ public class NumberService {
         if(!checkNumber(newNumber)||numberEntity==null||numberRepository.findByName(newNumber)!=null)
             return false;
         numberEntity.setName(newNumber);
+        cache.remove(number);
+        cache.put(newNumber,numberEntity);
         return true;
     }
 
@@ -53,6 +60,7 @@ public class NumberService {
         if(numberEntity==null)
             return false;
         numberRepository.delete(numberEntity);
+        cache.remove(number);
         return true;
     }
 
@@ -62,6 +70,7 @@ public class NumberService {
         List<NumberDTO> numbers = new ArrayList<>();
         for(Number number : numberEntities){
             numbers.add(new NumberDTO(number.getName()));
+            cache.put(number.getName(),number);
         }
         return numbers;
     }

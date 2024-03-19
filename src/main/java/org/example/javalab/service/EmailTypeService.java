@@ -1,6 +1,7 @@
 package org.example.javalab.service;
 
 import jakarta.transaction.Transactional;
+import org.example.javalab.component.Cache;
 import org.example.javalab.dto.DomainDTO;
 import org.example.javalab.entity.Email;
 import org.example.javalab.entity.EmailType;
@@ -17,13 +18,15 @@ import java.util.regex.Pattern;
 @org.springframework.stereotype.Service
 @EntityScan("org.example.javalab.entity")
 public class EmailTypeService {
+    Cache cache;
     EmailTypeRepository emailTypeRepository;
     EmailRepository emailRepository;
     private static String emailTypeRegex = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
 
-    public EmailTypeService(EmailTypeRepository emailTypeRepository, EmailRepository emailRepository) {
+    public EmailTypeService(EmailTypeRepository emailTypeRepository, EmailRepository emailRepository, Cache cache) {
         this.emailTypeRepository = emailTypeRepository;
         this.emailRepository = emailRepository;
+        this.cache = cache;
     }
 
     private boolean checkDomain(String text) {
@@ -38,7 +41,9 @@ public class EmailTypeService {
             if (emailTypeRepository.findByName(domain) != null) {
                 return false;
             }
-            emailTypeRepository.save(new EmailType(domain));
+            EmailType emailType = new EmailType(domain);
+            emailTypeRepository.save(emailType);
+            cache.put(domain,emailType);
             return true;
         }
         return false;
@@ -53,10 +58,13 @@ public class EmailTypeService {
             for(Request request : email.getRequests()){
                 request.getEmails().remove(email);
             }
+            cache.remove(email.getName());
         }
         emailRepository.deleteAll(emailType.getEmails());
         emailType.getEmails().clear();
         emailType.setName(newDomain);
+        cache.remove(domain);
+        cache.put(newDomain,emailType);
         return true;
     }
 
@@ -70,9 +78,11 @@ public class EmailTypeService {
             for(Request request : email.getRequests()){
                 request.getEmails().remove(email);
             }
+            cache.remove(email.getName());
         }
         emailRepository.deleteAll(emailType.getEmails());
         emailTypeRepository.delete(emailType);
+        cache.remove(domain);
         return true;
     }
 
@@ -82,6 +92,7 @@ public class EmailTypeService {
         List<DomainDTO> domains = new ArrayList<>();
         for(EmailType emailType : emailTypes){
             domains.add(new DomainDTO(emailType.getName()));
+            cache.put(emailType.getName(),emailType);
         }
        return domains;
     }
