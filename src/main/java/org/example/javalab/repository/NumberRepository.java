@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NumberRepository extends JpaRepository<Number,Long> {
-    Number findByNumberName(String numberName);
+    Number findByName(String name);
 }

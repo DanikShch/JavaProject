@@ -13,8 +13,8 @@ public class EmailType {
     @Column(name = "id")
     private Long emailTypeId;
 
-    @Column(name = "type_name")
-    private String typeName;
+    @Column(name = "name")
+    private String name;
 
     @OneToMany(mappedBy = "emailType")
     private Set<Email> emails = new HashSet<>();
@@ -27,22 +27,22 @@ public class EmailType {
         this.emails = emails;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getName() {
+        return name;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setName(String typeName) {
+        this.name = typeName;
     }
 
     public EmailType() {
     }
 
-    public EmailType(String typeName, Set<Email> emails) {
-        this.typeName = typeName;
+    public EmailType(String name, Set<Email> emails) {
+        this.name = name;
         this.emails = emails;
     }
-    public EmailType(String typeName) {
-        this.typeName = typeName;
+    public EmailType(String name) {
+        this.name = name;
     }
 }

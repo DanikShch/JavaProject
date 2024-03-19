@@ -45,7 +45,7 @@ public class RequestService {
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String number = matcher.group();
-            if(numberRepository.findByNumberName(number)==null){
+            if(numberRepository.findByName(number)==null){
                 numberRepository.save(new Number(number));
             }
             phoneNumbers.add(new NumberDTO(number));
@@ -56,7 +56,7 @@ public class RequestService {
     public List<EmailDTO> extractEmails(String text) {
         List<Email> emails = new ArrayList<>();
         List<EmailDTO> parsedEmails = new ArrayList<>();
-        Request request = requestRepository.findByRequestText(text);
+        Request request = requestRepository.findByText(text);
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(text);
 
@@ -68,16 +68,16 @@ public class RequestService {
             requestRepository.save(request);
         }
         for (Email email : emails) {
-            parsedEmails.add(new EmailDTO(email.getEmailName()));
+            parsedEmails.add(new EmailDTO(email.getName()));
             Pattern emailTypePattern = Pattern.compile(emailTypeRegex, Pattern.CASE_INSENSITIVE);
-            Matcher emailTypeMatcher = emailTypePattern.matcher(email.getEmailName());
-            if(emailRepository.findByEmailName(email.getEmailName()) != null){
-                email = emailRepository.findByEmailName(email.getEmailName());
+            Matcher emailTypeMatcher = emailTypePattern.matcher(email.getName());
+            if(emailRepository.findByName(email.getName()) != null){
+                email = emailRepository.findByName(email.getName());
                 email.getRequests().add(request);
             }
             if(emailTypeMatcher.find()){
                 String typeName = emailTypeMatcher.group();
-                EmailType emailType = emailTypeRepository.findByTypeName(typeName);
+                EmailType emailType = emailTypeRepository.findByName(typeName);
                 if(emailType == null){
                     emailType = new EmailType(typeName);
                     emailTypeRepository.save(emailType);
@@ -98,7 +98,7 @@ public class RequestService {
             requests = requestRepository.findAll();
         }
         else{
-            Email emailEntity = emailRepository.findByEmailName(email);
+            Email emailEntity = emailRepository.findByName(email);
             if(emailEntity!=null){
                 requests = new ArrayList<>(emailEntity.getRequests());
             }
@@ -107,27 +107,27 @@ public class RequestService {
             }
         }
         for(Request request : requests){
-            requestDTOS.add(new RequestDTO(request.getRequestText()));
+            requestDTOS.add(new RequestDTO(request.getText()));
         }
         return requestDTOS;
     }
 
     @Transactional
     public boolean updateRequest(String request, String newRequest) {
-        Request requestEntity = requestRepository.findByRequestText(request);
-        if(requestEntity==null||requestRepository.findByRequestText(newRequest)!=null)
+        Request requestEntity = requestRepository.findByText(request);
+        if(requestEntity==null||requestRepository.findByText(newRequest)!=null)
             return false;
         for(Email email : requestEntity.getEmails())
         {
             email.getRequests().remove(requestEntity);
         }
-        requestEntity.setRequestText(newRequest);
+        requestEntity.setText(newRequest);
         return true;
     }
 
     @Transactional
     public boolean deleteRequest(String request) {
-        Request requestEntity = requestRepository.findByRequestText(request);
+        Request requestEntity = requestRepository.findByText(request);
         if (requestEntity != null) {
             for(Email email : requestEntity.getEmails()){
                 email.getRequests().remove(requestEntity);

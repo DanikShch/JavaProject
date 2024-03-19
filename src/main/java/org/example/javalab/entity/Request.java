@@ -14,8 +14,8 @@ public class Request {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "request_text")
-    private String requestText;
+    @Column(name = "text")
+    private String text;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,  CascadeType.MERGE})
     @JoinTable(
@@ -33,12 +33,12 @@ public class Request {
         this.id = id;
     }
 
-    public String getRequestText() {
-        return requestText;
+    public String getText() {
+        return text;
     }
 
-    public void setRequestText(String requestText) {
-        this.requestText = requestText;
+    public void setText(String requestText) {
+        this.text = requestText;
     }
 
     public Request() {
@@ -52,7 +52,7 @@ public class Request {
         this.emails = emails;
     }
 
-    public Request(String requestText) {
-        this.requestText = requestText;
+    public Request(String text) {
+        this.text = text;
     }
 }

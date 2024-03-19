@@ -30,7 +30,7 @@ public class NumberService {
     @Transactional
     public boolean addNumber(String number) {
         if (checkNumber(number)) {
-            if (numberRepository.findByNumberName(number) != null) {
+            if (numberRepository.findByName(number) != null) {
                 return false;
             }
             numberRepository.save(new Number(number));
@@ -40,16 +40,16 @@ public class NumberService {
     }
     @Transactional
     public boolean updateNumber(String number, String newNumber) {
-        Number numberEntity = numberRepository.findByNumberName(number);
-        if(!checkNumber(newNumber)||numberEntity==null||numberRepository.findByNumberName(newNumber)!=null)
+        Number numberEntity = numberRepository.findByName(number);
+        if(!checkNumber(newNumber)||numberEntity==null||numberRepository.findByName(newNumber)!=null)
             return false;
-        numberEntity.setNumberName(newNumber);
+        numberEntity.setName(newNumber);
         return true;
     }
 
     @Transactional
     public boolean deleteNumber(String number) {
-        Number numberEntity = numberRepository.findByNumberName(number);
+        Number numberEntity = numberRepository.findByName(number);
         if(numberEntity==null)
             return false;
         numberRepository.delete(numberEntity);
@@ -61,7 +61,7 @@ public class NumberService {
         List<Number> numberEntities = numberRepository.findAll();
         List<NumberDTO> numbers = new ArrayList<>();
         for(Number number : numberEntities){
-            numbers.add(new NumberDTO(number.getNumberName()));
+            numbers.add(new NumberDTO(number.getName()));
         }
         return numbers;
     }

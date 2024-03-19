@@ -35,7 +35,7 @@ public class EmailTypeService {
     @Transactional
     public boolean addDomain(String domain) {
         if (checkDomain(domain)) {
-            if (emailTypeRepository.findByTypeName(domain) != null) {
+            if (emailTypeRepository.findByName(domain) != null) {
                 return false;
             }
             emailTypeRepository.save(new EmailType(domain));
@@ -45,8 +45,8 @@ public class EmailTypeService {
     }
     @Transactional
     public boolean updateDomain(String domain, String newDomain) {
-        EmailType emailType = emailTypeRepository.findByTypeName(domain);
-        if(!checkDomain(newDomain)||emailType==null||emailTypeRepository.findByTypeName(newDomain)!=null)
+        EmailType emailType = emailTypeRepository.findByName(domain);
+        if(!checkDomain(newDomain)||emailType==null||emailTypeRepository.findByName(newDomain)!=null)
             return false;
         for(Email email : emailType.getEmails())
         {
@@ -56,13 +56,13 @@ public class EmailTypeService {
         }
         emailRepository.deleteAll(emailType.getEmails());
         emailType.getEmails().clear();
-        emailType.setTypeName(newDomain);
+        emailType.setName(newDomain);
         return true;
     }
 
     @Transactional
     public boolean deleteDomain(String domain) {
-        EmailType emailType = emailTypeRepository.findByTypeName(domain);
+        EmailType emailType = emailTypeRepository.findByName(domain);
         if(emailType==null)
             return false;
         for(Email email : emailType.getEmails())
@@ -81,7 +81,7 @@ public class EmailTypeService {
         List<EmailType> emailTypes = emailTypeRepository.findAll();
         List<DomainDTO> domains = new ArrayList<>();
         for(EmailType emailType : emailTypes){
-            domains.add(new DomainDTO(emailType.getTypeName()));
+            domains.add(new DomainDTO(emailType.getName()));
         }
        return domains;
     }

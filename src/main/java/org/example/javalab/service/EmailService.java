@@ -47,12 +47,12 @@ public class EmailService {
             String domain = emailTypeMatcher.group();
             Email emailEntity = new Email(email);
             emailRepository.save(emailEntity);
-            if (emailTypeRepository.findByTypeName(domain) == null) {
+            if (emailTypeRepository.findByName(domain) == null) {
                 emailType = new EmailType(domain);
                 emailTypeRepository.save(emailType);
             }
             else {
-                emailType= emailTypeRepository.findByTypeName(domain);
+                emailType= emailTypeRepository.findByName(domain);
             }
             emailType.getEmails().add(emailEntity);
             emailEntity.setEmailType(emailType);
@@ -70,7 +70,7 @@ public class EmailService {
             emails = emailRepository.findAll();
         }
         else{
-            EmailType emailType = emailTypeRepository.findByTypeName(domain);
+            EmailType emailType = emailTypeRepository.findByName(domain);
             if(emailType!=null){
                 emails = new ArrayList<>(emailType.getEmails());
             }
@@ -79,7 +79,7 @@ public class EmailService {
             }
         }
         for(Email email : emails){
-            emailNames.add(new EmailDTO(email.getEmailName()));
+            emailNames.add(new EmailDTO(email.getName()));
         }
         return emailNames;
     }
@@ -89,18 +89,18 @@ public class EmailService {
         Pattern emailPattern = Pattern.compile(emailRegex);
         Matcher emailMatcher = emailPattern.matcher(newEmail);
         if (!emailMatcher.find()) return false;
-        Email emailEntity = emailRepository.findByEmailName(email);
+        Email emailEntity = emailRepository.findByName(email);
         if (emailEntity != null) {
             Pattern emailTypePattern = Pattern.compile(emailTypeRegex, Pattern.CASE_INSENSITIVE);
             Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
             if (emailTypeMatcher.find()) {
                 String domain = emailTypeMatcher.group();
-                EmailType emailType = emailTypeRepository.findByTypeName(domain);
+                EmailType emailType = emailTypeRepository.findByName(domain);
                 if (emailType == null) {
                     emailType = new EmailType(domain);
                     emailTypeRepository.save(emailType);
                 }
-                    emailEntity.setEmailName(newEmail);
+                    emailEntity.setName(newEmail);
                     emailEntity.setEmailType(emailType);
             }
             return true;
@@ -110,7 +110,7 @@ public class EmailService {
 
     @Transactional
     public boolean deleteEmail(String email) {
-        Email emailEntity = emailRepository.findByEmailName(email);
+        Email emailEntity = emailRepository.findByName(email);
         if (emailEntity != null) {
             for(Request request : emailEntity.getRequests()){
                 request.getEmails().remove(emailEntity);
