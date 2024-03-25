@@ -20,7 +20,7 @@ public class CustomLogger {
         LOGGER.info("Cache put");
     }
 
-    public void cacheRemove(String text) {
-        LOGGER.info("Cache remove: {}", text);
+    public void cacheRemove() {
+        LOGGER.info("Cache remove");
     }
 }

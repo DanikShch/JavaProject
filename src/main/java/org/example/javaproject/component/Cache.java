@@ -30,7 +30,7 @@ public class Cache {
 
     public void remove(String key) {
         hashMap.remove(key);
-        logger.cacheRemove(key);
+        logger.cacheRemove();
     }
 
     public boolean contains(String key) {
