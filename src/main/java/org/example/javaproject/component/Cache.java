@@ -9,7 +9,7 @@ import java.util.Map;
 public class Cache {
     private final CustomLogger logger = new CustomLogger();
     private final Map<String, Object> hashMap;
-    private final int maxSize = 10;
+    private static final int MAX_SIZE = 10;
 
     public Cache() {
         this.hashMap = new LinkedHashMap<>();
@@ -17,8 +17,8 @@ public class Cache {
 
     public void put(String key, Object value) {
         hashMap.put(key, value);
-        logger.cachePut(key);
-        if (hashMap.size() > maxSize) {
+        logger.cachePut();
+        if (hashMap.size() > MAX_SIZE) {
             String oldestKey = hashMap.keySet().iterator().next();
             hashMap.remove(oldestKey);
         }

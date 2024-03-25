@@ -16,19 +16,19 @@ public class LoggingAspect {
 
     @Before("execution(* org.example.javaproject.service.*.*(..)) || execution(* org.example.javaproject.controller.*.*(..))")
     public void logBeforeMethodExecution(JoinPoint joinPoint) {
-        LOGGER.info("Method execution started: {}", joinPoint.getSignature().toString());
+        LOGGER.info("Method execution started: {}", joinPoint.getSignature());
     }
 
     @AfterReturning(pointcut = "execution(* org.example.javaproject.service.*.*(..)) "
             + "|| execution(* org.example.javaproject.controller.*.*(..))", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
-        LOGGER.info("Method execution completed: {}. Result: {}", joinPoint.getSignature().toString(), result);
+        LOGGER.info("Method execution completed: {}. Result: {}", joinPoint.getSignature(), result);
     }
 
     @AfterThrowing(pointcut = "execution(* org.example.javaproject.service.*.*(..)) "
             + "|| execution(* org.example.javaproject.controller.*.*(..))", throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Exception ex) {
-        LOGGER.info("Method execution failed: {}. Exception: {}", joinPoint.getSignature().toString(), ex.getMessage());
+        LOGGER.info("Method execution failed: {}. Exception: {}", joinPoint.getSignature(), ex.getMessage());
     }
 
 }

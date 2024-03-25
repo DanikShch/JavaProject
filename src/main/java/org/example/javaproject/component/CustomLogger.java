@@ -16,8 +16,8 @@ public class CustomLogger {
         LOGGER.info(text);
     }
 
-    public void cachePut(String text) {
-        LOGGER.info("Cache put: {}", text);
+    public void cachePut() {
+        LOGGER.info("Cache put");
     }
 
     public void cacheRemove(String text) {
