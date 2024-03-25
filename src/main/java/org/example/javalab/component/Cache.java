@@ -7,38 +7,44 @@ import java.util.Map;
 
 @Component
 public class Cache {
-    private final Map<String,Object> hashMap;
+    private final Map<String, Object> hashMap;
     private final int maxSize = 20;
 
     public Cache() {
         this.hashMap = new HashMap<>();
     }
-    public void put(String key, Object value){
-        if(hashMap.size()==maxSize){
+
+    public void put(String key, Object value) {
+        if (hashMap.size() == maxSize) {
             removeOldestKey();
         }
         hashMap.put(key, value);
     }
-    public Object get(String key){
+
+    public Object get(String key) {
         return hashMap.get(key);
     }
-    public void remove(String key){
+
+    public void remove(String key) {
         hashMap.remove(key);
     }
-    public boolean contains(String key){
+
+    public boolean contains(String key) {
         return hashMap.containsKey(key);
     }
-    public void clear(){
+
+    public void clear() {
         hashMap.clear();
     }
-    private void removeOldestKey(){
+
+    private void removeOldestKey() {
         String oldestKey = null;
-        for(String key : hashMap.keySet()){
-            if(oldestKey==null||oldestKey.hashCode()< oldestKey.hashCode()){
-                oldestKey=key;
+        for (String key : hashMap.keySet()) {
+            if (oldestKey == null || oldestKey.hashCode() < oldestKey.hashCode()) {
+                oldestKey = key;
             }
         }
-        if(oldestKey!=null){
+        if (oldestKey != null) {
             hashMap.remove(oldestKey);
         }
     }

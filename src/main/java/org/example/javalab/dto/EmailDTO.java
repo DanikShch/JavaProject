@@ -1,6 +1,5 @@
 package org.example.javalab.dto;
 
-
 public class EmailDTO {
     String email;
 

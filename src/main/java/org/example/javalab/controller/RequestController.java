@@ -24,33 +24,34 @@ public class RequestController {
     }
 
     @PostMapping("/extractEmails")
-    public ResponseEntity<List<EmailDTO>> extractEmails(@RequestParam String text){
+    public ResponseEntity<List<EmailDTO>> extractEmails(@RequestParam String text) {
         return new ResponseEntity<>(requestService.extractEmails(text), HttpStatus.OK);
     }
 
     @PostMapping("/extractNumbers")
-    public ResponseEntity<List<NumberDTO>> extractNumbers(@RequestParam String text){
+    public ResponseEntity<List<NumberDTO>> extractNumbers(@RequestParam String text) {
         return new ResponseEntity<>(requestService.extractPhoneNumbers(text), HttpStatus.OK);
     }
+
     @GetMapping("/getRequests")
-    public ResponseEntity<List<RequestDTO>> getRequests(@RequestParam(required = false) String email){
+    public ResponseEntity<List<RequestDTO>> getRequests(@RequestParam(required = false) String email) {
         return new ResponseEntity<>(requestService.getRequests(email), HttpStatus.OK);
     }
+
     @PutMapping("/updateRequest")
-    public ResponseEntity<MessageDTO> updateRequest(@RequestParam String request, String newRequest){
-        if(requestService.updateRequest(request,newRequest)){
+    public ResponseEntity<MessageDTO> updateRequest(@RequestParam String request, String newRequest) {
+        if (requestService.updateRequest(request, newRequest)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }
+
     @DeleteMapping("/deleteRequest")
-    public ResponseEntity<MessageDTO> deleteRequest(@RequestParam String request){
-        if(requestService.deleteRequest(request)){
+    public ResponseEntity<MessageDTO> deleteRequest(@RequestParam String request) {
+        if (requestService.deleteRequest(request)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }

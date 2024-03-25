@@ -16,6 +16,7 @@ public class Number {
 
     public Number() {
     }
+
     public Number(String name) {
         this.name = name;
     }

@@ -42,6 +42,7 @@ public class EmailType {
         this.name = name;
         this.emails = emails;
     }
+
     public EmailType(String name) {
         this.name = name;
     }

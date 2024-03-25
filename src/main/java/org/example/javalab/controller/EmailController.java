@@ -19,35 +19,35 @@ public class EmailController {
     public EmailController(EmailService service) {
         this.service = service;
     }
+
     @PostMapping("/addEmail")
     public ResponseEntity<MessageDTO> addEmail(@RequestParam String email) {
-        if(service.addEmail(email)){
+        if (service.addEmail(email)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }
+
     @GetMapping("/getEmails")
-    public ResponseEntity<List<EmailDTO>> getEmails(@RequestParam(required = false) String domain){
+    public ResponseEntity<List<EmailDTO>> getEmails(@RequestParam(required = false) String domain) {
         return new ResponseEntity<List<EmailDTO>>(service.getEmails(domain), HttpStatus.OK);
     }
+
     @PutMapping("/updateEmail")
     public ResponseEntity<MessageDTO> updateEmail(@RequestParam String email, String newEmail) {
-        if(service.updateEmail(email,newEmail)){
+        if (service.updateEmail(email, newEmail)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }
 
     @DeleteMapping("/deleteEmail")
     public ResponseEntity<MessageDTO> deleteEmail(@RequestParam String email) {
-        if(service.deleteEmail(email)){
+        if (service.deleteEmail(email)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }

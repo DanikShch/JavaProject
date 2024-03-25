@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class NumberService {
     Cache cache;
     NumberRepository numberRepository;
-    private static String numberRegex = "\\b(?:\\+\\d{1,3}[-.\\s]?)?(\\d{1,4}[-.\\s]?){1,2}\\d{1,9}\\b";
+    private static String numberRegex = "\\b(?:\\+\\d{1,3}[-.\\s]?)?(\\d{1,4}[-.\\s]?) {1,2}\\d{1,9}\\b";
 
     public NumberService(NumberRepository numberRepository, Cache cache) {
         this.cache = cache;
@@ -38,42 +38,44 @@ public class NumberService {
             }
             Number numberEntity = new Number(number);
             numberRepository.save(numberEntity);
-            cache.put(number,numberEntity);
+            cache.put(number, numberEntity);
             return true;
         }
         return false;
     }
+
     @Transactional
     public boolean updateNumber(String number, String newNumber) {
         Number numberEntity = numberRepository.findByName(number);
-        if(!checkNumber(newNumber)||numberEntity==null||numberRepository.findByName(newNumber)!=null)
+        if (!checkNumber(newNumber) || numberEntity == null || numberRepository.findByName(newNumber) != null) {
             return false;
+        }
         numberEntity.setName(newNumber);
         cache.remove(number);
-        cache.put(newNumber,numberEntity);
+        cache.put(newNumber, numberEntity);
         return true;
     }
 
     @Transactional
     public boolean deleteNumber(String number) {
         Number numberEntity = numberRepository.findByName(number);
-        if(numberEntity==null)
+        if (numberEntity == null) {
             return false;
+        }
         numberRepository.delete(numberEntity);
         cache.remove(number);
         return true;
     }
 
     @Transactional
-    public List<NumberDTO> getNumbers(){
+    public List<NumberDTO> getNumbers() {
         List<Number> numberEntities = numberRepository.findAll();
         List<NumberDTO> numbers = new ArrayList<>();
-        for(Number number : numberEntities){
+        for (Number number : numberEntities) {
             numbers.add(new NumberDTO(number.getName()));
-            cache.put(number.getName(),number);
+            cache.put(number.getName(), number);
         }
         return numbers;
     }
-
 
 }

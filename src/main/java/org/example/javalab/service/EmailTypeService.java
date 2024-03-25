@@ -43,19 +43,20 @@ public class EmailTypeService {
             }
             EmailType emailType = new EmailType(domain);
             emailTypeRepository.save(emailType);
-            cache.put(domain,emailType);
+            cache.put(domain, emailType);
             return true;
         }
         return false;
     }
+
     @Transactional
     public boolean updateDomain(String domain, String newDomain) {
         EmailType emailType = emailTypeRepository.findByName(domain);
-        if(!checkDomain(newDomain)||emailType==null||emailTypeRepository.findByName(newDomain)!=null)
+        if (!checkDomain(newDomain) || emailType == null || emailTypeRepository.findByName(newDomain) != null) {
             return false;
-        for(Email email : emailType.getEmails())
-        {
-            for(Request request : email.getRequests()){
+        }
+        for (Email email : emailType.getEmails()) {
+            for (Request request : email.getRequests()) {
                 request.getEmails().remove(email);
             }
             cache.remove(email.getName());
@@ -64,18 +65,18 @@ public class EmailTypeService {
         emailType.getEmails().clear();
         emailType.setName(newDomain);
         cache.remove(domain);
-        cache.put(newDomain,emailType);
+        cache.put(newDomain, emailType);
         return true;
     }
 
     @Transactional
     public boolean deleteDomain(String domain) {
         EmailType emailType = emailTypeRepository.findByName(domain);
-        if(emailType==null)
+        if (emailType == null) {
             return false;
-        for(Email email : emailType.getEmails())
-        {
-            for(Request request : email.getRequests()){
+        }
+        for (Email email : emailType.getEmails()) {
+            for (Request request : email.getRequests()) {
                 request.getEmails().remove(email);
             }
             cache.remove(email.getName());
@@ -87,12 +88,12 @@ public class EmailTypeService {
     }
 
     @Transactional
-    public List<DomainDTO> getDomains(){
+    public List<DomainDTO> getDomains() {
         List<EmailType> emailTypes = emailTypeRepository.findAll();
         List<DomainDTO> domains = new ArrayList<>();
-        for(EmailType emailType : emailTypes){
+        for (EmailType emailType : emailTypes) {
             domains.add(new DomainDTO(emailType.getName()));
-            cache.put(emailType.getName(),emailType);
+            cache.put(emailType.getName(), emailType);
         }
        return domains;
     }

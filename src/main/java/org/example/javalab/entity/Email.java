@@ -25,6 +25,7 @@ public class Email {
 
     public Email() {
     }
+
     public Email(String name) {
         this.name = name;
     }

@@ -18,6 +18,7 @@ public class NumberController {
     public NumberController(NumberService numberService) {
         this.numberService = numberService;
     }
+
     @PostMapping("/addNumber")
     public ResponseEntity<MessageDTO> addNumber(@RequestParam String number) {
         if (numberService.addNumber(number)) {
@@ -26,26 +27,26 @@ public class NumberController {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }
+
     @GetMapping("/getNumbers")
-    public ResponseEntity<List<NumberDTO>> getNumbers(){
+    public ResponseEntity<List<NumberDTO>> getNumbers() {
         return new ResponseEntity<>(numberService.getNumbers(), HttpStatus.OK);
     }
+
     @PutMapping("/updateNumber")
     public ResponseEntity<MessageDTO> updateNumber(@RequestParam String number, String newNumber) {
-        if(numberService.updateNumber(number,newNumber)){
+        if (numberService.updateNumber(number, newNumber)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }
 
     @DeleteMapping("/deleteNumber")
     public ResponseEntity<MessageDTO> deleteNumber(@RequestParam String number) {
-        if(numberService.deleteNumber(number)){
+        if (numberService.deleteNumber(number)) {
             return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        }
-        else {
+        } else {
             return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
         }
     }

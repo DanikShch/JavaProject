@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
-public interface EmailRepository extends JpaRepository<Email,Long> {
+public interface EmailRepository extends JpaRepository<Email, Long> {
     Email findByName(String name);
 
     @Query("SELECT e FROM  Email e WHERE e.emailType.name = :emailType")
