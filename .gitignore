@@ -1,7 +1,7 @@
+checkstyle.xml
 HELP.md
 mvnw
 mvnw.cmd
-checkstyle.xml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
