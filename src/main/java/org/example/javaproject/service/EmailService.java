@@ -63,8 +63,10 @@ public class EmailService {
             emailEntity.setEmailType(emailType);
             cache.put(emailEntity.getName(), emailEntity);
             cache.put(emailType.getName(), emailType);
+            return true;
+        } else {
+            throw new RuntimeException("Wrong email");
         }
-        return false;
     }
 
     @Transactional
@@ -133,7 +135,8 @@ public class EmailService {
             emailRepository.delete(emailEntity);
             cache.remove(email);
             return true;
+        } else {
+            throw new RuntimeException("Cant delete email");
         }
-        return false;
     }
 }
