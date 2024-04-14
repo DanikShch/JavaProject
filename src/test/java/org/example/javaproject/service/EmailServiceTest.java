@@ -15,10 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -70,7 +67,7 @@ class EmailServiceTest {
         // Arrange
         String domain = "example.com";
         EmailType emailType = new EmailType("example.com");
-        Set<Email> emails = new HashSet<>();
+        Set<Email> emails = new LinkedHashSet<>();
         emails.add(new Email("test1@example.com"));
         emails.add(new Email("test2@example.com"));
 
