@@ -11,8 +11,6 @@ import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.example.javaproject.repository.NumberRepository;
 import org.example.javaproject.repository.RequestRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 
@@ -25,7 +23,6 @@ import java.util.regex.Pattern;
 @org.springframework.stereotype.Service
 @EntityScan("org.example.javaproject.entity")
 public class EmailService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
     private static final String EMAIL_REGEX = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
     private static final String EMAIL_TYPE_REGEX = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
     Cache cache;
@@ -43,7 +40,7 @@ public class EmailService {
     }
     
     @Transactional
-    public boolean addEmail(String email) {
+    public void addEmail(String email) {
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
         Matcher matcher = pattern.matcher(email);
         Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX);
@@ -63,7 +60,6 @@ public class EmailService {
             emailEntity.setEmailType(emailType);
             cache.put(emailEntity.getName(), emailEntity);
             cache.put(emailType.getName(), emailType);
-            return true;
         } else {
             throw new RuntimeException("Wrong email");
         }
@@ -86,7 +82,7 @@ public class EmailService {
                 emails = new ArrayList<>(emailRepository.findByEmailType(domain));
                 cache.put(emailType.getName(), emailType);
             } else {
-                return null;
+                throw new RuntimeException("Wrong domain");
             }
         }
         for (Email email : emails) {
@@ -97,11 +93,11 @@ public class EmailService {
     }
 
     @Transactional
-    public boolean updateEmail(String email, String newEmail) {
+    public void updateEmail(String email, String newEmail) {
         Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
         Matcher emailMatcher = emailPattern.matcher(newEmail);
         if (!emailMatcher.find()) {
-            return false;
+            throw new RuntimeException("Wrong new email");
         }
         Email emailEntity = emailRepository.findByName(email);
         if (emailEntity != null) {
@@ -120,13 +116,13 @@ public class EmailService {
             }
             cache.remove(email);
             cache.put(emailEntity.getName(), emailEntity);
-            return true;
+        } else {
+            throw new RuntimeException("Wrong old email");
         }
-        return false;
     }
 
     @Transactional
-    public boolean deleteEmail(String email) {
+    public void deleteEmail(String email) {
         Email emailEntity = emailRepository.findByName(email);
         if (emailEntity != null) {
             for (Request request : emailEntity.getRequests()) {
@@ -134,7 +130,6 @@ public class EmailService {
             }
             emailRepository.delete(emailEntity);
             cache.remove(email);
-            return true;
         } else {
             throw new RuntimeException("Cant delete email");
         }

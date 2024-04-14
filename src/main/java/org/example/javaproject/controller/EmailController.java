@@ -22,11 +22,8 @@ public class EmailController {
 
     @PostMapping("/addEmail")
     public ResponseEntity<MessageDTO> addEmail(@RequestParam String email) {
-        if (service.addEmail(email)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        service.addEmail(email);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @GetMapping("/getEmails")
@@ -36,19 +33,13 @@ public class EmailController {
 
     @PutMapping("/updateEmail")
     public ResponseEntity<MessageDTO> updateEmail(@RequestParam String email, String newEmail) {
-        if (service.updateEmail(email, newEmail)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        service.updateEmail(email, newEmail);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteEmail")
     public ResponseEntity<MessageDTO> deleteEmail(@RequestParam String email) {
-        if (service.deleteEmail(email)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        service.deleteEmail(email);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 }
