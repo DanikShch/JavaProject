@@ -51,22 +51,23 @@ public class EmailService {
             email = matcher.group();
             if (emailRepository.findByName(email) != null) {
                 throw new ServiceException("Email already exists");
-            }
-            String domain = emailTypeMatcher.group();
-            Email emailEntity = new Email(email);
-            emailRepository.save(emailEntity);
-            if (emailTypeRepository.findByName(domain) == null) {
-                emailType = new EmailType(domain);
-                emailTypeRepository.save(emailType);
             } else {
-                emailType = emailTypeRepository.findByName(domain);
+                String domain = emailTypeMatcher.group();
+                Email emailEntity = new Email(email);
+                emailRepository.save(emailEntity);
+                if (emailTypeRepository.findByName(domain) == null) {
+                    emailType = new EmailType(domain);
+                    emailTypeRepository.save(emailType);
+                } else {
+                    emailType = emailTypeRepository.findByName(domain);
+                }
+                emailType.getEmails().add(emailEntity);
+                emailEntity.setEmailType(emailType);
+                cache.put(emailEntity.getName(), emailEntity);
+                cache.put(emailType.getName(), emailType);
             }
-            emailType.getEmails().add(emailEntity);
-            emailEntity.setEmailType(emailType);
-            cache.put(emailEntity.getName(), emailEntity);
-            cache.put(emailType.getName(), emailType);
         } else {
-            throw new RuntimeException("Wrong email");
+            throw new ServiceException("Wrong email");
         }
     }
 
