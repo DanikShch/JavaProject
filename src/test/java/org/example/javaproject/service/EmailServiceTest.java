@@ -50,6 +50,7 @@ class EmailServiceTest {
         emailEntity.setEmailType(emailType);
         when(emailRepository.findByName(email)).thenReturn(null);
         when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
+        assertDoesNotThrow(() -> emailService.addEmail(email));
         verify(emailTypeRepository, never()).save(any(EmailType.class));
     }
 
@@ -63,6 +64,7 @@ class EmailServiceTest {
         emailEntity.setEmailType(emailType);
         when(emailRepository.findByName(email)).thenReturn(null);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
+        assertDoesNotThrow(() -> emailService.addEmail(email));
     }
 
     @Test
