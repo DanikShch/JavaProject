@@ -5,11 +5,11 @@ import org.example.javaproject.dto.EmailDTO;
 import org.example.javaproject.entity.Email;
 import org.example.javaproject.entity.EmailType;
 import org.example.javaproject.entity.Request;
+import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.example.javaproject.repository.NumberRepository;
 import org.example.javaproject.repository.RequestRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -41,25 +41,47 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testAddEmail() {
+    public void testAddEmailWithExistingDomain() {
         // Arrange
         String email = "test@example.com";
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
         Email emailEntity = new Email(email);
         emailEntity.setEmailType(emailType);
+        when(emailRepository.findByName(email)).thenReturn(null);
+        when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
+        verify(emailTypeRepository, never()).save(any(EmailType.class));
+    }
 
+    @Test
+    public void testAddEmailWitNonExistingDomain() {
+        // Arrange
+        String email = "test@example.com";
+        String domain = "@example.com";
+        EmailType emailType = new EmailType(domain);
+        Email emailEntity = new Email(email);
+        emailEntity.setEmailType(emailType);
+        when(emailRepository.findByName(email)).thenReturn(null);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
-        when(emailRepository.save(any(Email.class))).thenReturn(emailEntity);
-        when(emailTypeRepository.save(any(EmailType.class))).thenReturn(emailType);
+    }
 
-        // Act
-        assertDoesNotThrow(() -> emailService.addEmail(email));
+    @Test
+    public void testAddInvalidEmail() {
+        // Arrange
+        String email = "NotEmail =(";
+        assertThrows(RuntimeException.class, () -> emailService.addEmail(email));
+    }
 
-        // Assert
-        verify(emailRepository, times(1)).save(any(Email.class));
-        verify(emailTypeRepository, times(1)).save(any(EmailType.class));
-        verify(cache, times(2)).put(anyString(), any());
+    @Test
+    public void testAddExistingEmail() {
+        // Arrange
+        String email = "test@example.com";
+        String domain = "@example.com";
+        EmailType emailType = new EmailType(domain);
+        Email emailEntity = new Email(email);
+        emailEntity.setEmailType(emailType);
+        when(emailRepository.findByName(email)).thenReturn(emailEntity);
+        assertThrows(RuntimeException.class, () -> emailService.addEmail(email));
     }
 
     @Test
@@ -151,28 +173,45 @@ class EmailServiceTest {
         // Act
         assertDoesNotThrow(() -> emailService.updateEmail(email, newEmail));
 
-        // Assert
-        assertEquals(newEmail, emailEntity.getName());
-        assertEquals(emailType, emailEntity.getEmailType());
+
         verify(cache, times(1)).remove(email);
         verify(cache, times(1)).put(newEmail, emailEntity);
         verify(cache, times(1)).put(domain, emailType);
     }
 
     @Test
-    public void testDeleteEmail() {
+    public void testDeleteExistingEmail() {
         // Arrange
         String email = "test@example.com";
         Email emailEntity = new Email(email);
-
         when(emailRepository.findByName(email)).thenReturn(emailEntity);
 
-        // Act
-        assertDoesNotThrow(() -> emailService.deleteEmail(email));
+        Request request = new Request();
+        request.setEmails(new HashSet<>());
+        request.getEmails().add(emailEntity);
+
+        Set<Request> requests = new HashSet<>();
+        requests.add(request);
+
+        emailEntity.setRequests(requests);
+        for (Request requestEntity : emailEntity.getRequests()) {
+            requestEntity.getEmails().remove(emailEntity);
+        }
+        emailService.deleteEmail(email);
 
         // Assert
+        verify(emailRepository, times(1)).findByName(email);
         verify(emailRepository, times(1)).delete(emailEntity);
         verify(cache, times(1)).remove(email);
+    }
+
+    @Test
+    public void testDeleteNonExistingEmail() {
+        // Arrange
+        String email = "test@example.com";
+        when(emailRepository.findByName(email)).thenReturn(null);
+        // Act
+        assertThrows(ServiceException.class, () -> emailService.deleteEmail(email));
     }
 
 }

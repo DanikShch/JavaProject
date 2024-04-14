@@ -7,6 +7,7 @@ import org.example.javaproject.dto.EmailDTO;
 import org.example.javaproject.entity.Email;
 import org.example.javaproject.entity.EmailType;
 import org.example.javaproject.entity.Request;
+import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.example.javaproject.repository.NumberRepository;
@@ -47,6 +48,10 @@ public class EmailService {
         Matcher emailTypeMatcher = emailTypePattern.matcher(email);
         EmailType emailType;
         if (matcher.find() && emailTypeMatcher.find()) {
+            email = matcher.group();
+            if (emailRepository.findByName(email) != null) {
+                throw new ServiceException("Email already exists");
+            }
             String domain = emailTypeMatcher.group();
             Email emailEntity = new Email(email);
             emailRepository.save(emailEntity);
@@ -82,7 +87,7 @@ public class EmailService {
                 emails = new ArrayList<>(emailRepository.findByEmailType(domain));
                 cache.put(emailType.getName(), emailType);
             } else {
-                throw new RuntimeException("Wrong domain");
+                throw new ServiceException("Wrong domain");
             }
         }
         for (Email email : emails) {
@@ -97,7 +102,7 @@ public class EmailService {
         Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
         Matcher emailMatcher = emailPattern.matcher(newEmail);
         if (!emailMatcher.find()) {
-            throw new RuntimeException("Wrong new email");
+            throw new ServiceException("Wrong new email");
         }
         Email emailEntity = emailRepository.findByName(email);
         if (emailEntity != null) {
@@ -117,7 +122,7 @@ public class EmailService {
             cache.remove(email);
             cache.put(emailEntity.getName(), emailEntity);
         } else {
-            throw new RuntimeException("Wrong old email");
+            throw new ServiceException("Wrong old email");
         }
     }
 
@@ -131,7 +136,7 @@ public class EmailService {
             emailRepository.delete(emailEntity);
             cache.remove(email);
         } else {
-            throw new RuntimeException("Cant delete email");
+            throw new ServiceException("Cant delete email");
         }
     }
 }
