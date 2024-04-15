@@ -6,10 +6,12 @@ import org.example.javaproject.dto.DomainDTO;
 import org.example.javaproject.entity.Email;
 import org.example.javaproject.entity.EmailType;
 import org.example.javaproject.entity.Request;
+import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+import java.sql.SQLWarning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,7 +23,7 @@ public class EmailTypeService {
     Cache cache;
     EmailTypeRepository emailTypeRepository;
     EmailRepository emailRepository;
-    private static final String EMAIL_TYPE_REGEX = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
+    public static final String EMAIL_TYPE_REGEX = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
 
     public EmailTypeService(EmailTypeRepository emailTypeRepository, EmailRepository emailRepository, Cache cache) {
         this.emailTypeRepository = emailTypeRepository;
@@ -36,24 +38,24 @@ public class EmailTypeService {
     }
 
     @Transactional
-    public boolean addDomain(String domain) {
+    public void addDomain(String domain) {
         if (checkDomain(domain)) {
             if (emailTypeRepository.findByName(domain) != null) {
-                return false;
+                throw new ServiceException("Email already exists");
             }
             EmailType emailType = new EmailType(domain);
             emailTypeRepository.save(emailType);
             cache.put(domain, emailType);
-            return true;
+        } else {
+            throw new ServiceException("Invalid domain");
         }
-        return false;
     }
 
     @Transactional
-    public boolean updateDomain(String domain, String newDomain) {
+    public void updateDomain(String domain, String newDomain) {
         EmailType emailType = emailTypeRepository.findByName(domain);
         if (!checkDomain(newDomain) || emailType == null || emailTypeRepository.findByName(newDomain) != null) {
-            return false;
+            throw new ServiceException("Invalid or non existing domain");
         }
         for (Email email : emailType.getEmails()) {
             for (Request request : email.getRequests()) {
@@ -66,14 +68,13 @@ public class EmailTypeService {
         emailType.setName(newDomain);
         cache.remove(domain);
         cache.put(newDomain, emailType);
-        return true;
     }
 
     @Transactional
-    public boolean deleteDomain(String domain) {
+    public void deleteDomain(String domain) {
         EmailType emailType = emailTypeRepository.findByName(domain);
         if (emailType == null) {
-            return false;
+            throw new ServiceException("Email doesnt exists");
         }
         for (Email email : emailType.getEmails()) {
             for (Request request : email.getRequests()) {
@@ -84,7 +85,6 @@ public class EmailTypeService {
         emailRepository.deleteAll(emailType.getEmails());
         emailTypeRepository.delete(emailType);
         cache.remove(domain);
-        return true;
     }
 
     @Transactional

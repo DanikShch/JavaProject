@@ -13,6 +13,6 @@ public interface EmailRepository extends JpaRepository<Email, Long> {
 
     @Query(value = "SELECT e.* FROM emails e INNER JOIN email_types et ON e.email_type_id = et.id WHERE et.name = :emailType", nativeQuery = true)
     Set<Email> findByEmailType(@Param("emailType") String emailType);
-    /*@Query("SELECT e FROM  Email e WHERE e.emailType.name = :emailType")
-    Set<Email> findByEmailType(@Param("emailType") String emailType);*/
+    //@Query("SELECT e FROM  Email e WHERE e.emailType.name = :emailType")
+    //Set<Email> findByEmailType(@Param("emailType") String emailType);*/
 }

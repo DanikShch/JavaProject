@@ -8,8 +8,6 @@ import org.example.javaproject.entity.Request;
 import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
-import org.example.javaproject.repository.NumberRepository;
-import org.example.javaproject.repository.RequestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -29,13 +27,9 @@ class EmailServiceTest {
     @InjectMocks
     private EmailService emailService;
     @Mock
-    private NumberRepository numberRepository;
-    @Mock
     private EmailRepository emailRepository;
     @Mock
     private EmailTypeRepository emailTypeRepository;
-    @Mock
-    private RequestRepository requestRepository;
     @Mock
     private Cache cache;
 
@@ -46,7 +40,7 @@ class EmailServiceTest {
 
     @Test
     void testAddEmailWithExistingDomain() {
-        // Arrange
+
         String email = "test@example.com";
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
@@ -60,7 +54,7 @@ class EmailServiceTest {
 
     @Test
     void testAddEmailWitNonExistingDomain() {
-        // Arrange
+
         String email = "test@example.com";
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
@@ -82,7 +76,6 @@ class EmailServiceTest {
     @Test
     void testAddInvalidEmail() {
         String email = "Not email =(";
-        String domain = "Not domain =(";
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
         Matcher matcher = pattern.matcher(email);
         Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX);
@@ -93,7 +86,6 @@ class EmailServiceTest {
 
     @Test
     void testAddExistingEmail() {
-        // Arrange
         String email = "test@example.com";
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
@@ -104,7 +96,7 @@ class EmailServiceTest {
     }
 
     @Test
-    void testGetEmails_WithDomain_ReturnsEmailDTOList() {
+    void testGetEmails() {
         String domain = "example.com";
         EmailType emailType = new EmailType("example.com");
         Set<Email> emails = new LinkedHashSet<>();
@@ -129,7 +121,7 @@ class EmailServiceTest {
     }
 
     @Test
-    void testGetEmails_WithNullDomain_ReturnsAllEmailDTOs() {
+    void testGetAllEmails() {
         List<Email> emails = new ArrayList<>();
         emails.add(new Email("test1@example.com"));
         emails.add(new Email("test2@example.com"));
@@ -148,15 +140,13 @@ class EmailServiceTest {
     }
 
     @Test
-    void testGetEmails_WithInvalidDomain_ThrowsRuntimeException() {
+    void testGetEmailsInvalidDomain() {
         String domain = "invalid.com";
 
         when(cache.contains(domain)).thenReturn(false);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> {
-            emailService.getEmails(domain);
-        });
+        assertThrows(RuntimeException.class, () -> emailService.getEmails(domain));
 
         verify(cache, times(1)).contains(domain);
         verify(cache, never()).get(anyString());
@@ -167,7 +157,6 @@ class EmailServiceTest {
 
     @Test
     void testUpdateEmailExistingDomain() {
-        // Arrange
         String email = "old@example.com";
         String newEmail = "new@example.com";
         String domain = "@example.com";
@@ -181,11 +170,7 @@ class EmailServiceTest {
         assertTrue(emailTypeMatcher.find());
         when(emailRepository.findByName(email)).thenReturn(emailEntity);
         when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
-
-        // Act
         assertDoesNotThrow(() -> emailService.updateEmail(email, newEmail));
-
-
         verify(cache, times(1)).remove(email);
         verify(cache, times(1)).put(newEmail, emailEntity);
         verify(cache, times(1)).put(domain, emailType);
@@ -206,8 +191,6 @@ class EmailServiceTest {
         assertTrue(emailTypeMatcher.find());
         when(emailRepository.findByName(email)).thenReturn(emailEntity);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
-        EmailType emailType = new EmailType(domain);
-        // Act
         assertDoesNotThrow(() -> emailService.updateEmail(email, newEmail));
 
 
@@ -228,7 +211,7 @@ class EmailServiceTest {
 
     @Test
     void testUpdateEmailNonExistingEmail() {
-        // Arrange
+
         String email = "non.existing@example.com";
         String newEmail = "new@example.com";
         String domain = "@example.com";
@@ -249,8 +232,7 @@ class EmailServiceTest {
 
 
     @Test
-    public void testDeleteExistingEmail() {
-        // Arrange
+    void testDeleteExistingEmail() {
         String email = "test@example.com";
         Email emailEntity = new Email(email);
         when(emailRepository.findByName(email)).thenReturn(emailEntity);
@@ -268,18 +250,16 @@ class EmailServiceTest {
         }
         emailService.deleteEmail(email);
 
-        // Assert
         verify(emailRepository, times(1)).findByName(email);
         verify(emailRepository, times(1)).delete(emailEntity);
         verify(cache, times(1)).remove(email);
     }
 
     @Test
-    public void testDeleteNonExistingEmail() {
-        // Arrange
+    void testDeleteNonExistingEmail() {
+
         String email = "test@example.com";
         when(emailRepository.findByName(email)).thenReturn(null);
-        // Act
         assertThrows(ServiceException.class, () -> emailService.deleteEmail(email));
     }
 

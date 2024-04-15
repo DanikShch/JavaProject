@@ -21,11 +21,8 @@ public class EmailTypeController {
 
     @PostMapping("/addDomain")
     public ResponseEntity<MessageDTO> addDomain(@RequestParam String domain) {
-        if (emailTypeService.addDomain(domain)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        emailTypeService.addDomain(domain);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @GetMapping("/getDomains")
@@ -35,19 +32,13 @@ public class EmailTypeController {
 
     @PutMapping("/updateDomain")
     public ResponseEntity<MessageDTO> updateDomain(@RequestParam String domain, String newDomain) {
-        if (emailTypeService.updateDomain(domain, newDomain)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        emailTypeService.updateDomain(domain, newDomain);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteDomain")
     public ResponseEntity<MessageDTO> deleteDomain(@RequestParam String domain) {
-        if (emailTypeService.deleteDomain(domain)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        emailTypeService.deleteDomain(domain);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 }

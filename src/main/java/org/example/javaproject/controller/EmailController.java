@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class EmailController {
     private static final String SUCCESS_MSG = "Success";
-    private static final String FAILED_MSG = "Failed";
+
     private final EmailService service;
 
     public EmailController(EmailService service) {
@@ -28,7 +28,7 @@ public class EmailController {
 
     @GetMapping("/getEmails")
     public ResponseEntity<List<EmailDTO>> getEmails(@RequestParam(required = false) String domain) {
-        return new ResponseEntity<List<EmailDTO>>(service.getEmails(domain), HttpStatus.OK);
+        return new ResponseEntity<>(service.getEmails(domain), HttpStatus.OK);
     }
 
     @PutMapping("/updateEmail")
