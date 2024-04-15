@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.example.javaproject.component.Cache;
 import org.example.javaproject.dto.NumberDTO;
 import org.example.javaproject.entity.Number;
+import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.NumberRepository;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
@@ -31,40 +32,38 @@ public class NumberService {
     }
 
     @Transactional
-    public boolean addNumber(String number) {
+    public void addNumber(String number) {
         if (checkNumber(number)) {
             if (numberRepository.findByName(number) != null) {
-                return false;
+                throw new ServiceException("Number already exists");
             }
             Number numberEntity = new Number(number);
             numberRepository.save(numberEntity);
             cache.put(number, numberEntity);
-            return true;
+        } else {
+            throw new ServiceException("Invalid number");
         }
-        return false;
     }
 
     @Transactional
-    public boolean updateNumber(String number, String newNumber) {
+    public void updateNumber(String number, String newNumber) {
         Number numberEntity = numberRepository.findByName(number);
         if (!checkNumber(newNumber) || numberEntity == null || numberRepository.findByName(newNumber) != null) {
-            return false;
+            throw new ServiceException("Invalid new number or existing old number");
         }
         numberEntity.setName(newNumber);
         cache.remove(number);
         cache.put(newNumber, numberEntity);
-        return true;
     }
 
     @Transactional
-    public boolean deleteNumber(String number) {
+    public void deleteNumber(String number) {
         Number numberEntity = numberRepository.findByName(number);
         if (numberEntity == null) {
-            return false;
+            throw new ServiceException("Invalid number");
         }
         numberRepository.delete(numberEntity);
         cache.remove(number);
-        return true;
     }
 
     @Transactional

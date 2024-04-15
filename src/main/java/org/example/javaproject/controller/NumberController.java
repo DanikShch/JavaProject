@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 public class NumberController {
     private static final String SUCCESS_MSG = "Success";
-    private static final String FAILED_MSG = "Failed";
     private final NumberService numberService;
 
     public NumberController(NumberService numberService) {
@@ -21,11 +20,8 @@ public class NumberController {
 
     @PostMapping("/addNumber")
     public ResponseEntity<MessageDTO> addNumber(@RequestParam String number) {
-        if (numberService.addNumber(number)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        numberService.addNumber(number);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @GetMapping("/getNumbers")
@@ -35,19 +31,13 @@ public class NumberController {
 
     @PutMapping("/updateNumber")
     public ResponseEntity<MessageDTO> updateNumber(@RequestParam String number, String newNumber) {
-        if (numberService.updateNumber(number, newNumber)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        numberService.updateNumber(number, newNumber);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteNumber")
     public ResponseEntity<MessageDTO> deleteNumber(@RequestParam String number) {
-        if (numberService.deleteNumber(number)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        numberService.deleteNumber(number);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 }
