@@ -71,9 +71,19 @@ class EmailTypeServiceTest {
         String oldDomain = "@gmail.com";
         String newDomain = "@mail.ru";
         EmailType oldEmailType = new EmailType(oldDomain);
+        Email email = new Email("test@gmail.com");
+        Request request = new Request("qwe test@gmail.com sad sad");
+        email.getRequests().add(request);
+        request.getEmails().add(email);
+        oldEmailType.getEmails().add(email);
         when(emailTypeRepository.findByName(oldDomain)).thenReturn(oldEmailType);
+        for (Email emailEntity : oldEmailType.getEmails()) {
+            for (Request requestEntity : email.getRequests()) {
+                request.getEmails().remove(any(Email.class));
+            }
+        }
         assertDoesNotThrow(() -> emailTypeService.updateDomain(oldDomain,newDomain));
-        verify(cache, times(1)).remove(anyString());
+        verify(cache, times(2)).remove(anyString());
         verify(cache, times(1)).put(anyString(), any(EmailType.class));
     }
 
