@@ -2,7 +2,9 @@ package org.example.javaproject.service;
 
 import org.example.javaproject.component.Cache;
 import org.example.javaproject.dto.DomainDTO;
+import org.example.javaproject.entity.Email;
 import org.example.javaproject.entity.EmailType;
+import org.example.javaproject.entity.Request;
 import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
@@ -90,7 +92,18 @@ class EmailTypeServiceTest {
     void testDeleteExistingDomain() {
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
+        Email email = new Email("test@example.com");
+        Request request = new Request("qwe test@example.com sad sad");
+        email.getRequests().add(request);
+        request.getEmails().add(email);
+        emailType.getEmails().add(email);
         when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
+        for (Email emailEntity : emailType.getEmails()) {
+            for (Request requestEntity : email.getRequests()) {
+                request.getEmails().remove(any(Email.class));
+            }
+        }
+
         assertDoesNotThrow(() -> emailTypeService.deleteDomain(domain));
         verify(emailRepository).deleteAll(anySet());
         verify(emailTypeRepository).delete(emailType);

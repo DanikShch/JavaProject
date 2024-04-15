@@ -11,7 +11,6 @@ import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-import java.sql.SQLWarning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 public class EmailTypeController {
     private static final String SUCCESS_MSG = "Success";
-    private static final String FAILED_MSG = "Failed";
     private final EmailTypeService emailTypeService;
 
     public EmailTypeController(EmailTypeService emailTypeService) {
