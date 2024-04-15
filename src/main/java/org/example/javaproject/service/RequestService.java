@@ -9,6 +9,7 @@ import org.example.javaproject.entity.Email;
 import org.example.javaproject.entity.EmailType;
 import org.example.javaproject.entity.Number;
 import org.example.javaproject.entity.Request;
+import org.example.javaproject.exceptions.ServiceException;
 import org.example.javaproject.repository.EmailRepository;
 import org.example.javaproject.repository.EmailTypeRepository;
 import org.example.javaproject.repository.NumberRepository;
@@ -124,22 +125,22 @@ public class RequestService {
     }
 
     @Transactional
-    public boolean updateRequest(String request, String newRequest) {
+    public void updateRequest(String request, String newRequest) {
         Request requestEntity = requestRepository.findByText(request);
         if (requestEntity == null || requestRepository.findByText(newRequest) != null) {
-            return false;
+            throw new ServiceException("Invalid request text");
+        } else {
+            for (Email email : requestEntity.getEmails()) {
+                email.getRequests().remove(requestEntity);
+            }
+            requestEntity.setText(newRequest);
+            cache.remove(request);
+            cache.put(newRequest, requestEntity);
         }
-        for (Email email : requestEntity.getEmails()) {
-            email.getRequests().remove(requestEntity);
-        }
-        requestEntity.setText(newRequest);
-        cache.remove(request);
-        cache.put(newRequest, requestEntity);
-        return true;
     }
 
     @Transactional
-    public boolean deleteRequest(String request) {
+    public void deleteRequest(String request) {
         Request requestEntity = requestRepository.findByText(request);
         if (requestEntity != null) {
             for (Email email : requestEntity.getEmails()) {
@@ -147,9 +148,9 @@ public class RequestService {
             }
             requestRepository.delete(requestEntity);
             cache.remove(request);
-            return true;
+        } else {
+            throw new ServiceException("Invalid request");
         }
-        return false;
     }
 }
 

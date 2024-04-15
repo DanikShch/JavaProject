@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class RequestController {
     private static final String SUCCESS_MSG = "Success";
-    private static final String FAILED_MSG = "Failed";
+
     private final RequestService requestService;
 
     public RequestController(RequestService requestService) {
@@ -40,19 +40,13 @@ public class RequestController {
 
     @PutMapping("/updateRequest")
     public ResponseEntity<MessageDTO> updateRequest(@RequestParam String request, String newRequest) {
-        if (requestService.updateRequest(request, newRequest)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        requestService.updateRequest(request, newRequest);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteRequest")
     public ResponseEntity<MessageDTO> deleteRequest(@RequestParam String request) {
-        if (requestService.deleteRequest(request)) {
-            return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
-        } else {
-            return ResponseEntity.ok(new MessageDTO(FAILED_MSG));
-        }
+        requestService.deleteRequest(request);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 }
