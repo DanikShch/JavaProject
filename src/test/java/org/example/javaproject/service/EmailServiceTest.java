@@ -16,7 +16,11 @@ import org.mockito.*;
 
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static org.example.javaproject.service.EmailService.EMAIL_REGEX;
+import static org.example.javaproject.service.EmailService.EMAIL_TYPE_REGEX;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +45,7 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testAddEmailWithExistingDomain() {
+    void testAddEmailWithExistingDomain() {
         // Arrange
         String email = "test@example.com";
         String domain = "@example.com";
@@ -55,27 +59,40 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testAddEmailWitNonExistingDomain() {
+    void testAddEmailWitNonExistingDomain() {
         // Arrange
         String email = "test@example.com";
         String domain = "@example.com";
         EmailType emailType = new EmailType(domain);
         Email emailEntity = new Email(email);
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX);
+        Matcher emailTypeMatcher = emailTypePattern.matcher(email);
         emailEntity.setEmailType(emailType);
+        assertTrue(matcher.find());
+        assertTrue(emailTypeMatcher.find());
         when(emailRepository.findByName(email)).thenReturn(null);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
         assertDoesNotThrow(() -> emailService.addEmail(email));
+        verify(cache, times(1)).put(anyString(), any(Email.class));
+        verify(cache, times(1)).put(anyString(), any(EmailType.class));
     }
 
     @Test
-    public void testAddInvalidEmail() {
-        // Arrange
-        String email = "NotEmail =(";
+    void testAddInvalidEmail() {
+        String email = "Not email =(";
+        String domain = "Not domain =(";
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX);
+        Matcher emailTypeMatcher = emailTypePattern.matcher(email);
+        assertFalse(matcher.find()&&emailTypeMatcher.find());
         assertThrows(RuntimeException.class, () -> emailService.addEmail(email));
     }
 
     @Test
-    public void testAddExistingEmail() {
+    void testAddExistingEmail() {
         // Arrange
         String email = "test@example.com";
         String domain = "@example.com";
@@ -87,8 +104,7 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testGetEmails_WithDomain_ReturnsEmailDTOList() {
-        // Arrange
+    void testGetEmails_WithDomain_ReturnsEmailDTOList() {
         String domain = "example.com";
         EmailType emailType = new EmailType("example.com");
         Set<Email> emails = new LinkedHashSet<>();
@@ -99,15 +115,12 @@ class EmailServiceTest {
         when(cache.get(domain)).thenReturn(emailType);
         when(emailRepository.findByEmailType(domain)).thenReturn(emails);
 
-        // Act
         List<EmailDTO> result = emailService.getEmails(domain);
 
-        // Assert
         assertEquals(2, result.size());
         assertEquals("test1@example.com", result.get(0).getEmail());
         assertEquals("test2@example.com", result.get(1).getEmail());
 
-        // Verify interactions with mocks
         verify(cache, times(1)).contains(domain);
         verify(cache, times(1)).get(domain);
         verify(emailRepository, times(1)).findByEmailType(domain);
@@ -116,23 +129,18 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testGetEmails_WithNullDomain_ReturnsAllEmailDTOs() {
-        // Arrange
+    void testGetEmails_WithNullDomain_ReturnsAllEmailDTOs() {
         List<Email> emails = new ArrayList<>();
         emails.add(new Email("test1@example.com"));
         emails.add(new Email("test2@example.com"));
 
         when(emailRepository.findAll()).thenReturn(emails);
-
-        // Act
         List<EmailDTO> result = emailService.getEmails(null);
 
-        // Assert
         assertEquals(2, result.size());
         assertEquals("test1@example.com", result.get(0).getEmail());
         assertEquals("test2@example.com", result.get(1).getEmail());
 
-        // Verify interactions with mocks
         verify(cache, never()).contains(anyString());
         verify(cache, never()).get(anyString());
         verify(emailRepository, times(1)).findAll();
@@ -140,19 +148,16 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testGetEmails_WithInvalidDomain_ThrowsRuntimeException() {
-        // Arrange
+    void testGetEmails_WithInvalidDomain_ThrowsRuntimeException() {
         String domain = "invalid.com";
 
         when(cache.contains(domain)).thenReturn(false);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
 
-        // Act and Assert
         assertThrows(RuntimeException.class, () -> {
             emailService.getEmails(domain);
         });
 
-        // Verify interactions with mocks
         verify(cache, times(1)).contains(domain);
         verify(cache, never()).get(anyString());
         verify(emailTypeRepository, times(1)).findByName(domain);
@@ -161,14 +166,19 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testUpdateEmail() {
+    void testUpdateEmailExistingDomain() {
         // Arrange
         String email = "old@example.com";
         String newEmail = "new@example.com";
         String domain = "@example.com";
+        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+        Matcher emailMatcher = emailPattern.matcher(newEmail);
+        Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
         Email emailEntity = new Email(email);
         EmailType emailType = new EmailType(domain);
-
+        assertTrue(emailMatcher.find());
+        assertTrue(emailTypeMatcher.find());
         when(emailRepository.findByName(email)).thenReturn(emailEntity);
         when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
 
@@ -180,6 +190,63 @@ class EmailServiceTest {
         verify(cache, times(1)).put(newEmail, emailEntity);
         verify(cache, times(1)).put(domain, emailType);
     }
+
+    @Test
+    void testUpdateEmailNonExistingDomain() {
+        // Arrange
+        String email = "old@example.com";
+        String newEmail = "new@example.com";
+        String domain = "@example.com";
+        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+        Matcher emailMatcher = emailPattern.matcher(newEmail);
+        Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
+        Email emailEntity = new Email(email);
+        assertTrue(emailMatcher.find());
+        assertTrue(emailTypeMatcher.find());
+        when(emailRepository.findByName(email)).thenReturn(emailEntity);
+        when(emailTypeRepository.findByName(domain)).thenReturn(null);
+        EmailType emailType = new EmailType(domain);
+        // Act
+        assertDoesNotThrow(() -> emailService.updateEmail(email, newEmail));
+
+
+        verify(cache, times(1)).remove(email);
+        verify(cache, times(1)).put(newEmail, emailEntity);
+    }
+
+    @Test
+    void testUpdateWrongEmail() {
+        // Arrange
+        String email = "old@example.com";
+        String newEmail = "Not email example.com";
+        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+        Matcher emailMatcher = emailPattern.matcher(newEmail);
+        assertFalse(emailMatcher.find());
+        assertThrows(ServiceException.class, () -> emailService.updateEmail(email, newEmail));
+    }
+
+    @Test
+    void testUpdateEmailNonExistingEmail() {
+        // Arrange
+        String email = "non.existing@example.com";
+        String newEmail = "new@example.com";
+        String domain = "@example.com";
+        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+        Matcher emailMatcher = emailPattern.matcher(newEmail);
+        Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
+        Email emailEntity = new Email(email);
+        EmailType emailType = new EmailType(domain);
+        assertTrue(emailMatcher.find());
+        assertTrue(emailTypeMatcher.find());
+        when(emailRepository.findByName(email)).thenReturn(null);
+        assertThrows(ServiceException.class, () -> emailService.updateEmail(email, newEmail));
+        verify(cache, never()).remove(email);
+        verify(cache, never()).put(newEmail, emailEntity);
+        verify(cache, never()).put(domain, emailType);
+    }
+
 
     @Test
     public void testDeleteExistingEmail() {

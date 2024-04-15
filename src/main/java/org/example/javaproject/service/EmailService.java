@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 @org.springframework.stereotype.Service
 @EntityScan("org.example.javaproject.entity")
 public class EmailService {
-    private static final String EMAIL_REGEX = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
-    private static final String EMAIL_TYPE_REGEX = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
+    public static final String EMAIL_REGEX = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b";
+    public static final String EMAIL_TYPE_REGEX = "@[a-z0-9.-]+\\.[a-z]{2,}\\b";
     Cache cache;
     NumberRepository numberRepository;
     EmailRepository emailRepository;
