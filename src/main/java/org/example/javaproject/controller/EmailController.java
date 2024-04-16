@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 public class EmailController {
-    private static final String SUCCESS_MSG = "Success";
+    public static final String SUCCESS_MSG = "Success";
 
     private final EmailService service;
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 public class NumberController {
-    private static final String SUCCESS_MSG = "Success";
+    public static final String SUCCESS_MSG = "Success";
     private final NumberService numberService;
 
     public NumberController(NumberService numberService) {
