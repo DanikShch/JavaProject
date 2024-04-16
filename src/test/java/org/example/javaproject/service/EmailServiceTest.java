@@ -258,7 +258,7 @@ class EmailServiceTest {
     }
 
     @Test
-    public void testAddEmails() {
+    void testAddEmails() {
         List<EmailDTO> emails = new ArrayList<>();
         emails.add(new EmailDTO("example1@example.com"));
         emails.add(new EmailDTO("example2@example.com"));
