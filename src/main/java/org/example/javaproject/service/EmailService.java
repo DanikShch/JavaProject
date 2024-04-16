@@ -140,4 +140,9 @@ public class EmailService {
             throw new ServiceException("Cant delete email");
         }
     }
+
+    @Transactional
+    public void addEmails(List<EmailDTO> emails) {
+        emails.stream().map(EmailDTO::getEmail).forEach(this::addEmail);
+    }
 }

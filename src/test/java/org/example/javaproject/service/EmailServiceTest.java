@@ -142,10 +142,8 @@ class EmailServiceTest {
     @Test
     void testGetEmailsInvalidDomain() {
         String domain = "invalid.com";
-
         when(cache.contains(domain)).thenReturn(false);
         when(emailTypeRepository.findByName(domain)).thenReturn(null);
-
         assertThrows(RuntimeException.class, () -> emailService.getEmails(domain));
 
         verify(cache, times(1)).contains(domain);
@@ -178,7 +176,6 @@ class EmailServiceTest {
 
     @Test
     void testUpdateEmailNonExistingDomain() {
-        // Arrange
         String email = "old@example.com";
         String newEmail = "new@example.com";
         String domain = "@example.com";
@@ -200,7 +197,6 @@ class EmailServiceTest {
 
     @Test
     void testUpdateWrongEmail() {
-        // Arrange
         String email = "old@example.com";
         String newEmail = "Not email example.com";
         Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
@@ -211,7 +207,6 @@ class EmailServiceTest {
 
     @Test
     void testUpdateEmailNonExistingEmail() {
-
         String email = "non.existing@example.com";
         String newEmail = "new@example.com";
         String domain = "@example.com";
@@ -257,10 +252,19 @@ class EmailServiceTest {
 
     @Test
     void testDeleteNonExistingEmail() {
-
         String email = "test@example.com";
         when(emailRepository.findByName(email)).thenReturn(null);
         assertThrows(ServiceException.class, () -> emailService.deleteEmail(email));
+    }
+
+    @Test
+    public void testAddEmails() {
+        List<EmailDTO> emails = new ArrayList<>();
+        emails.add(new EmailDTO("example1@example.com"));
+        emails.add(new EmailDTO("example2@example.com"));
+        emails.add(new EmailDTO("example3@example.com"));
+        emailService.addEmails(emails);
+        assertDoesNotThrow(() -> emailService.addEmails(emails));
     }
 
 }

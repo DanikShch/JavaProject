@@ -11,13 +11,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.example.javaproject.controller.EmailController.SUCCESS_MSG;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class EmailControllerTest {
     @InjectMocks
@@ -94,4 +94,20 @@ class EmailControllerTest {
         assertEquals(SUCCESS_MSG, response.getBody().getMessage());
         verify(emailService).deleteEmail(email);
     }
+
+    @Test
+    public void testAddEmails() {
+        List<EmailDTO> emails = new ArrayList<>();
+        emails.add(new EmailDTO("example1@example.com"));
+        emails.add(new EmailDTO("example2@example.com"));
+        emails.add(new EmailDTO("example3@example.com"));
+
+        ResponseEntity<MessageDTO> response = emailController.addEmails(emails);
+        verify(emailService, times(1)).addEmails(emails);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(SUCCESS_MSG, response.getBody().getMessage());
+    }
+
+
 }

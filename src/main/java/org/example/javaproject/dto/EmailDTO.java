@@ -14,4 +14,7 @@ public class EmailDTO {
     public EmailDTO(String email) {
         this.email = email;
     }
+
+    public EmailDTO() {
+    }
 }

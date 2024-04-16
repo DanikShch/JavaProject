@@ -9,7 +9,7 @@ import java.util.Map;
 public class Cache {
     private final CustomLogger logger = new CustomLogger();
     private final Map<String, Object> hashMap;
-    private static final int MAX_SIZE = 10;
+    public static final int MAX_SIZE = 10;
 
     public Cache() {
         this.hashMap = new LinkedHashMap<>();

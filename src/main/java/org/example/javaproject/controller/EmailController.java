@@ -42,4 +42,10 @@ public class EmailController {
         service.deleteEmail(email);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
+
+    @PostMapping("/addEmails")
+    public ResponseEntity<MessageDTO> addEmails(@RequestBody List<EmailDTO> emails) {
+        service.addEmails(emails);
+        return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
+    }
 }
