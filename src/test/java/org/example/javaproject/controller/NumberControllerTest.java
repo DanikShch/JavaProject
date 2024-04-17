@@ -1,7 +1,9 @@
 package org.example.javaproject.controller;
 
+import org.example.javaproject.component.CustomLogger;
 import org.example.javaproject.dto.MessageDTO;
 import org.example.javaproject.dto.NumberDTO;
+import org.example.javaproject.service.CounterService;
 import org.example.javaproject.service.NumberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,12 @@ class NumberControllerTest {
 
     @Mock
     private NumberService numberService;
+
+    @Mock
+    private CustomLogger logger;
+
+    @Mock
+    private CounterService counterService;
 
     @BeforeEach
     void setUp() {
