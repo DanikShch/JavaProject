@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 public class EmailTypeController {
     public static final String SUCCESS_MSG = "Success";
+    public static final String COUNTER_MSG = "Counter = ";
     private final EmailTypeService emailTypeService;
     private final CustomLogger logger;
     private final CounterService counterService;
@@ -26,27 +27,27 @@ public class EmailTypeController {
 
     @PostMapping("/addDomain")
     public ResponseEntity<MessageDTO> addDomain(@RequestParam String domain) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         emailTypeService.addDomain(domain);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @GetMapping("/getDomains")
     public ResponseEntity<List<DomainDTO>> getDomains() {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         return new ResponseEntity<>(emailTypeService.getDomains(), HttpStatus.OK);
     }
 
     @PutMapping("/updateDomain")
     public ResponseEntity<MessageDTO> updateDomain(@RequestParam String domain, String newDomain) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         emailTypeService.updateDomain(domain, newDomain);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteDomain")
     public ResponseEntity<MessageDTO> deleteDomain(@RequestParam String domain) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         emailTypeService.deleteDomain(domain);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }

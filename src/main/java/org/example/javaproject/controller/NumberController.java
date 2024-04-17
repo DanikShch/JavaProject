@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 public class NumberController {
     public static final String SUCCESS_MSG = "Success";
+    public static final String COUNTER_MSG = "Counter = ";
     private final NumberService numberService;
     private final CustomLogger logger;
     private final CounterService counterService;
@@ -26,27 +27,27 @@ public class NumberController {
 
     @PostMapping("/addNumber")
     public ResponseEntity<MessageDTO> addNumber(@RequestParam String number) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         numberService.addNumber(number);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @GetMapping("/getNumbers")
     public ResponseEntity<List<NumberDTO>> getNumbers() {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         return new ResponseEntity<>(numberService.getNumbers(), HttpStatus.OK);
     }
 
     @PutMapping("/updateNumber")
     public ResponseEntity<MessageDTO> updateNumber(@RequestParam String number, String newNumber) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         numberService.updateNumber(number, newNumber);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
 
     @DeleteMapping("/deleteNumber")
     public ResponseEntity<MessageDTO> deleteNumber(@RequestParam String number) {
-        logger.info("Counter = " + counterService.incrementAndGet());
+        logger.info(COUNTER_MSG + counterService.incrementAndGet());
         numberService.deleteNumber(number);
         return ResponseEntity.ok(new MessageDTO(SUCCESS_MSG));
     }
