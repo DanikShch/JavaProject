@@ -93,7 +93,7 @@ public class EmailService {
         }
         for (Email email : emails) {
             cache.put(email.getName(), email);
-            emailNames.add(new EmailDTO(email.getName()));
+            emailNames.add(new EmailDTO(email.getId(), email.getName()));
         }
         return emailNames;
     }
