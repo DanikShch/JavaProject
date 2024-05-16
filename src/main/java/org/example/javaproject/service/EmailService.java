@@ -106,7 +106,8 @@ public class EmailService {
             throw new ServiceException("Wrong new email");
         }
         Email emailEntity = emailRepository.findByName(email);
-        if (emailEntity != null) {
+        Email newEmailEntity = emailRepository.findByName(newEmail);
+        if (emailEntity != null && newEmailEntity == null) {
             Pattern emailTypePattern = Pattern.compile(EMAIL_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
             Matcher emailTypeMatcher = emailTypePattern.matcher(newEmail);
             if (emailTypeMatcher.find()) {
