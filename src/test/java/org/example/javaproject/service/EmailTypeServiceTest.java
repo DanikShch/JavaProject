@@ -77,11 +77,7 @@ class EmailTypeServiceTest {
         request.getEmails().add(email);
         oldEmailType.getEmails().add(email);
         when(emailTypeRepository.findByName(oldDomain)).thenReturn(oldEmailType);
-        for (Email emailEntity : oldEmailType.getEmails()) {
-            for (Request requestEntity : email.getRequests()) {
-                request.getEmails().remove(any(Email.class));
-            }
-        }
+        request.getEmails().remove(any(Email.class));
         assertDoesNotThrow(() -> emailTypeService.updateDomain(oldDomain,newDomain));
         verify(cache, times(2)).remove(anyString());
         verify(cache, times(1)).put(anyString(), any(EmailType.class));
@@ -108,11 +104,7 @@ class EmailTypeServiceTest {
         request.getEmails().add(email);
         emailType.getEmails().add(email);
         when(emailTypeRepository.findByName(domain)).thenReturn(emailType);
-        for (Email emailEntity : emailType.getEmails()) {
-            for (Request requestEntity : email.getRequests()) {
-                request.getEmails().remove(any(Email.class));
-            }
-        }
+        request.getEmails().remove(any(Email.class));
 
         assertDoesNotThrow(() -> emailTypeService.deleteDomain(domain));
         verify(emailRepository).deleteAll(anySet());

@@ -5,7 +5,6 @@ import org.example.javaproject.dto.EmailDTO;
 import org.example.javaproject.dto.NumberDTO;
 import org.example.javaproject.dto.RequestDTO;
 import org.example.javaproject.entity.Email;
-import org.example.javaproject.entity.EmailType;
 import org.example.javaproject.entity.Number;
 import org.example.javaproject.entity.Request;
 import org.example.javaproject.exceptions.ServiceException;
