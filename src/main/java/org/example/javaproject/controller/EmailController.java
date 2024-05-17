@@ -15,7 +15,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 public class EmailController {
-    public static final String SUCCESS_MSG = "Success";
+    public static final String SUCCESS_MSG = "Success!";
     public static final String COUNTER_MSG = "Counter = ";
 
     private final EmailService emailService;
