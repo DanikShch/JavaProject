@@ -9,3 +9,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://monorail.proxy.rlwy.net:15420/railway
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: fJafFXzyfLonWYtuKRMQggsLmjlrvtdx
+    depends_on:
+      - db
+  db:
+    image: postgres:14.11
+    environment:
+      DATABASE_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: JavaProject
+    expose:
+      - 5432
